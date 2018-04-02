@@ -110,9 +110,7 @@ class Game extends React.Component {
      );
    });
 
-   const movesDesc = moves.slice().reverse();
-
-    let status;
+  let status;
     if(winner) {
       status = 'Winner: ' + winner;
     } else {
