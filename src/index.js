@@ -1,6 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+
+function HistoryDisplay(props) {
+  const list = props.isReversed? props.moves.slice().reverse():props.moves;
+  return props.isReversed? (<ol reversed>{list}</ol>): ( <ol>{list}</ol>);
+}
+
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -47,6 +53,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
+      isReversed: false,
     };
   }
 
@@ -78,6 +85,12 @@ class Game extends React.Component {
       xIsNext: (step % 2) === 0,
     });
   }
+  toggle() {
+    this.setState({
+      isReversed: !this.state.isReversed,
+    });
+  }
+
 
   render() {
     const history = this.state.history;
@@ -85,6 +98,7 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
+
     let highlightClass = this.state.stepNumber === move ? "highlight": "normal";
     const desc = move ?
        'Go to move #' + move + ' Col=' + step.moveLocation.col + ' Row= ' + step.moveLocation.row:
@@ -95,6 +109,8 @@ class Game extends React.Component {
        </li>
      );
    });
+
+   const movesDesc = moves.slice().reverse();
 
     let status;
     if(winner) {
@@ -112,7 +128,11 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+           <button onClick={() => this.toggle()}>Toggle</button>
+           <HistoryDisplay
+             isReversed={this.state.isReversed}
+             moves={moves}
+             />
         </div>
       </div>
     );
