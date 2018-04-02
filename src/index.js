@@ -8,8 +8,9 @@ function HistoryDisplay(props) {
 }
 
 function Square(props) {
+  let sClass = "square " + props.highlight;
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={sClass} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -17,9 +18,11 @@ function Square(props) {
 
 class Board extends React.Component {
   renderSquare(i) {
+    let highlightClass = this.props.winner&&this.props.winner.winnerList.includes(i)?'highlight':'normal';
     return (
       <Square
         key = {i}
+        highlight= {highlightClass}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -112,7 +115,7 @@ class Game extends React.Component {
 
   let status;
     if(winner) {
-      status = 'Winner: ' + winner;
+      status = 'Winner: ' + winner.winnerName;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' :'O');
     }
@@ -120,6 +123,7 @@ class Game extends React.Component {
       <div className="game">
         <div className="game-board">
           <Board
+            winner={winner}
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
             />
@@ -158,7 +162,10 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winnerName: squares[a],
+        winnerList: lines[i]
+      }
     }
   }
   return null;
